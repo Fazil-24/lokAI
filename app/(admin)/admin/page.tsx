@@ -10,6 +10,8 @@ import {
   type ScoringWeights,
 } from "@/lib/scoring";
 import type { ThemeCard } from "@/lib/dashboardData";
+import { ConstituencyMapNoSSR } from "@/app/components/ConstituencyMapClient";
+import type { MapLocation } from "@/app/components/ConstituencyMap";
 
 interface DashboardSummary {
   recurringIssueThemes: number;
@@ -37,6 +39,7 @@ export default function AdminDashboardPage() {
   const router = useRouter();
   const [cards, setCards] = useState<ThemeCard[]>([]);
   const [summary, setSummary] = useState<DashboardSummary | null>(null);
+  const [mapLocations, setMapLocations] = useState<MapLocation[]>([]);
   const [weights, setWeights] = useState<ScoringWeights>(DEFAULT_WEIGHTS);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -45,15 +48,19 @@ export default function AdminDashboardPage() {
   useEffect(() => {
     async function load() {
       try {
-        const [themesRes, summaryRes] = await Promise.all([
+        const [themesRes, summaryRes, mapRes] = await Promise.all([
           fetch("/api/themes"),
           fetch("/api/dashboard-summary"),
+          fetch("/api/map"),
         ]);
-        if (!themesRes.ok || !summaryRes.ok) throw new Error("Failed to load dashboard data");
+        if (!themesRes.ok || !summaryRes.ok || !mapRes.ok)
+          throw new Error("Failed to load dashboard data");
         const themesData = await themesRes.json();
         const summaryData = await summaryRes.json();
+        const mapData = await mapRes.json();
         setCards(themesData.themes);
         setSummary(summaryData);
+        setMapLocations(mapData.locations);
       } catch (err) {
         setError(err instanceof Error ? err.message : "Failed to load dashboard");
       } finally {
@@ -73,6 +80,15 @@ export default function AdminDashboardPage() {
   const selected = selectedId
     ? ranked.find((r) => r.project.id === selectedId)
     : ranked[0];
+
+  const selectedLocationId = selected ? cardById.get(selected.project.id)?.locationId : null;
+
+  const handleSelectLocation = (locationId: string) => {
+    const themeAtLocation = ranked.find(
+      (r) => cardById.get(r.project.id)?.locationId === locationId
+    );
+    if (themeAtLocation) setSelectedId(themeAtLocation.project.id);
+  };
 
   const handleLogout = async () => {
     await fetch("/api/admin-logout", { method: "POST" });
@@ -121,7 +137,7 @@ export default function AdminDashboardPage() {
         </div>
       )}
 
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1.4fr_1fr]">
+      <div className="grid grid-cols-1 gap-4 xl:grid-cols-[1.1fr_1fr_0.9fr]">
         <section className="rounded-2xl bg-bg-elevated p-4 shadow-[var(--shadow-elevated)] sm:p-6">
           <h2 className="mb-4 text-lg font-semibold text-text-primary">Priority weights</h2>
           <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -197,6 +213,28 @@ export default function AdminDashboardPage() {
         </section>
 
         <section className="rounded-2xl bg-bg-elevated p-4 shadow-[var(--shadow-elevated)] sm:p-6">
+          <div className="mb-3 flex items-center justify-between">
+            <h2 className="text-lg font-semibold text-text-primary">Demand heatmap</h2>
+            <div className="flex items-center gap-3 text-xs text-text-secondary">
+              <LegendDot color="#8a7f61" label="Low" />
+              <LegendDot color="#c1af8b" label="Med" />
+              <LegendDot color="#dc2626" label="High" />
+            </div>
+          </div>
+          <div className="h-[400px] overflow-hidden rounded-xl">
+            <ConstituencyMapNoSSR
+              locations={mapLocations}
+              selectedLocationId={selectedLocationId}
+              onSelectLocation={handleSelectLocation}
+            />
+          </div>
+          <p className="mt-2 text-xs text-text-secondary/70">
+            Circle size/color = submissions + issue themes at that block. Town-center points —
+            not precise ward boundaries.
+          </p>
+        </section>
+
+        <section className="rounded-2xl bg-bg-elevated p-4 shadow-[var(--shadow-elevated)] sm:p-6">
           <h2 className="mb-3 text-lg font-semibold text-text-primary">Score breakdown</h2>
           {!selected ? (
             <p className="text-text-secondary">Select a theme to see its score breakdown.</p>
@@ -246,6 +284,15 @@ export default function AdminDashboardPage() {
         </section>
       </div>
     </main>
+  );
+}
+
+function LegendDot({ color, label }: { color: string; label: string }) {
+  return (
+    <span className="flex items-center gap-1">
+      <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: color }} />
+      {label}
+    </span>
   );
 }
 
