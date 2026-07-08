@@ -47,10 +47,7 @@ backend service.
 | Auth | Signed-cookie admin session for `/admin` (see [`lib/adminAuth.ts`](lib/adminAuth.ts)); `/submit` has zero auth friction |
 
 Real data: 222 MPLADS works for the Chikballapur Lok Sabha constituency, Karnataka
-(`data/chikballapur_mplads_seed.csv`), plus a handful of cited Census 2011 indicators. See
-[`files/lokai-claude-code-prompt.md`](files/lokai-claude-code-prompt.md) for the full data-honesty
-notes (e.g. every CSV row is `Unsanctioned` in real life — mapped to
-`"MP-Recommended (Pending District Sanction)"`, never relabeled).
+(`data/chikballapur_mplads_seed.csv`), plus a handful of cited Census 2011 indicators. (https://dataful.in/collections/589/)
 
 ## Local setup
 
