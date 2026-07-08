@@ -64,3 +64,12 @@ export async function verifyConnectivity(): Promise<boolean> {
     return false;
   }
 }
+
+/** The driver returns Neo4j integers as {low, high} objects in some contexts; normalize defensively. */
+export function toNumber(value: unknown): number {
+  if (typeof value === "number") return value;
+  if (value && typeof value === "object" && "low" in (value as Record<string, unknown>)) {
+    return Number((value as { low: number }).low);
+  }
+  return Number(value) || 0;
+}

@@ -27,8 +27,12 @@ export interface FeasibilityInput {
 const DEFAULT_ANNUAL_ENTITLEMENT = 50_000_000; // ₹5 crore, per MPLADS guidelines
 const NON_DURABLE_SECTORS = new Set(["other"]);
 
+export function isDurableAssetSector(sector: string): boolean {
+  return !NON_DURABLE_SECTORS.has(sector);
+}
+
 function checkDurableAsset(input: FeasibilityInput): RuleResult {
-  const isDurable = !NON_DURABLE_SECTORS.has(input.sector);
+  const isDurable = isDurableAssetSector(input.sector);
   return {
     ruleId: "rule-durable-asset",
     ruleName: "Durable Community Asset Requirement",
