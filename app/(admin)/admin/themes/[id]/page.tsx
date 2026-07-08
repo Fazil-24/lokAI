@@ -4,6 +4,7 @@ import { useEffect, useState, use as usePromise } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type { ComplianceStatus } from "@/lib/schemeRules";
+import { ConnectedImpactPanel } from "@/app/components/ConnectedImpactPanel";
 
 interface ThemeDetailResponse {
   theme: {
@@ -216,6 +217,7 @@ export default function ThemeDetailPage({ params }: { params: Promise<{ id: stri
                       />
                       Add to comparison
                     </label>
+                    <ConnectedImpactPanel projectId={p.id} />
                   </div>
                 ))}
               </div>
