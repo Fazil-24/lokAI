@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
+    "dotenv": "^17.4.2",
     "framer-motion": "^12.42.2",
     "leaflet": "^1.9.4",
     "neo4j-driver": "^6.2.0",
