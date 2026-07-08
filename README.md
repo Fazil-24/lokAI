@@ -21,7 +21,6 @@ https://lok-ai.vercel.app/
 <img width="647" height="379" alt="GenAI Chat App for Women Entrepreneurs – Using AWS Bedrock and Flask - visual selection (4)" src="https://github.com/user-attachments/assets/a1f31c09-9cac-4117-ae4c-76404b354d65" />
 
 
-LokAI Architecture
 1.	Citizen submits — text, voice, or photo, no login, via the intake portal.
 2.	Extraction — Gemini (multimodal) pulls structured fields from the raw input: issue theme, location, urgency, affected group, summary.
 3.	Graph write — the submission is matched against existing recurring themes (or a new one is created) and written into Neo4j alongside real Location, Sector, Scheme, and SanctionedWork nodes.
