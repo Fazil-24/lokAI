@@ -13,6 +13,9 @@ never an LLM-invented number. The only two jobs an LLM is ever allowed to do (en
 (2) narrate/explain a score the code already computed.
 
 
+## Deployed link and demo video 
+https://lok-ai.vercel.app/
+
 ## Architecture
 
 <img width="647" height="379" alt="GenAI Chat App for Women Entrepreneurs – Using AWS Bedrock and Flask - visual selection (4)" src="https://github.com/user-attachments/assets/a1f31c09-9cac-4117-ae4c-76404b354d65" />
