@@ -214,10 +214,19 @@ export async function reason(req: ReasonRequest): Promise<ReasonResult> {
 function extractJsonBlock(text: string): string {
   const fenced = text.match(/```(?:json)?\s*([\s\S]*?)```/i);
   if (fenced) return fenced[1].trim();
+
+  // The response may be a JSON object or a JSON array — match whichever
+  // opening bracket appears first to its corresponding closing bracket.
   const firstBrace = text.indexOf("{");
-  const lastBrace = text.lastIndexOf("}");
-  if (firstBrace !== -1 && lastBrace !== -1 && lastBrace > firstBrace) {
-    return text.slice(firstBrace, lastBrace + 1);
+  const firstBracket = text.indexOf("[");
+  const candidates = [firstBrace, firstBracket].filter((i) => i !== -1);
+  if (candidates.length === 0) return text.trim();
+
+  const start = Math.min(...candidates);
+  const isArray = text[start] === "[";
+  const end = isArray ? text.lastIndexOf("]") : text.lastIndexOf("}");
+  if (end > start) {
+    return text.slice(start, end + 1);
   }
   return text.trim();
 }

@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
   DEFAULT_WEIGHTS,
@@ -201,9 +202,18 @@ export default function AdminDashboardPage() {
                           )}
                         </p>
                       </div>
-                      <span className="font-mono text-sm text-text-secondary">
-                        {r.breakdown.total.toFixed(2)}
-                      </span>
+                      <div className="flex flex-col items-end gap-1">
+                        <span className="font-mono text-sm text-text-secondary">
+                          {r.breakdown.total.toFixed(2)}
+                        </span>
+                        <Link
+                          href={`/admin/themes/${r.project.id}`}
+                          onClick={(e) => e.stopPropagation()}
+                          className="text-xs text-accent hover:underline"
+                        >
+                          Details →
+                        </Link>
+                      </div>
                     </div>
                   </motion.li>
                 );
