@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useRef, useState } from "react";
+import Link from "next/link";
 import { compressImage } from "@/lib/compressImage";
 import { KNOWN_BLOCK_NAMES } from "@/lib/locations";
 
@@ -157,13 +158,21 @@ export default function SubmitPage() {
               <span className="text-text-primary">Summary:</span> {result.extraction.summary}
             </p>
           </div>
-          <button
-            type="button"
-            onClick={resetForm}
-            className="mt-6 rounded-full bg-accent px-6 py-2.5 font-medium text-accent-foreground transition-opacity hover:opacity-90"
-          >
-            Submit another
-          </button>
+          <div className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row">
+            <button
+              type="button"
+              onClick={resetForm}
+              className="w-full rounded-full bg-accent px-6 py-2.5 font-medium text-accent-foreground transition-opacity hover:opacity-90 sm:w-auto"
+            >
+              Submit another
+            </button>
+            <Link
+              href="/"
+              className="w-full rounded-full border border-[var(--border)] px-6 py-2.5 font-medium text-text-primary transition-colors hover:bg-bg-secondary sm:w-auto"
+            >
+              Back to home
+            </Link>
+          </div>
         </div>
       </main>
     );
