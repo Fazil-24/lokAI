@@ -23,6 +23,12 @@ interface DashboardSummary {
   schemeCompatibleThemeCount: number;
 }
 
+interface LlmHealth {
+  configured: { cerebras: boolean; gemini: boolean };
+  lastCerebras: { success: boolean; timestamp: string } | null;
+  lastGemini: { success: boolean; timestamp: string } | null;
+}
+
 const WEIGHT_LABELS: { key: keyof ScoringWeights; label: string; hint: string }[] = [
   { key: "w1", label: "Demand", hint: "Linked submissions/themes" },
   { key: "w2", label: "Urgency", hint: "Recurrence + severity" },
@@ -45,6 +51,9 @@ export default function AdminDashboardPage() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [llmHealth, setLlmHealth] = useState<LlmHealth | null>(null);
+  const [resetting, setResetting] = useState(false);
+  const [resetMessage, setResetMessage] = useState<string | null>(null);
 
   useEffect(() => {
     async function load() {
@@ -69,7 +78,32 @@ export default function AdminDashboardPage() {
       }
     }
     void load();
+
+    fetch("/api/llm-health")
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => data && setLlmHealth(data))
+      .catch(() => {});
   }, []);
+
+  const handleDemoReset = async () => {
+    if (!window.confirm("Reset demo data? This deletes all citizen submissions and generated project options, then re-seeds the real MPLADS base data.")) {
+      return;
+    }
+    setResetting(true);
+    setResetMessage(null);
+    try {
+      const res = await fetch("/api/demo-reset", { method: "POST" });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Reset failed");
+      setResetMessage("Demo data reset.");
+      router.refresh();
+      window.location.reload();
+    } catch (err) {
+      setResetMessage(err instanceof Error ? err.message : "Reset failed");
+    } finally {
+      setResetting(false);
+    }
+  };
 
   const ranked: RankedProject[] = useMemo(
     () => rankProjects(cards.map((c) => c.features), weights),
@@ -99,20 +133,47 @@ export default function AdminDashboardPage() {
 
   return (
     <main className="min-h-screen p-4 sm:p-6">
-      <header className="mb-6 flex items-center justify-between">
+      <header className="mb-6 flex flex-wrap items-center justify-between gap-3">
         <div>
           <p className="text-sm font-medium uppercase tracking-widest text-accent">
             Officer dashboard
           </p>
           <h1 className="text-2xl font-semibold text-text-primary">Chikballapur Constituency</h1>
         </div>
-        <button
-          onClick={handleLogout}
-          className="rounded-full border border-[var(--border)] px-4 py-2 text-sm text-text-secondary transition-colors hover:bg-bg-secondary"
-        >
-          Sign out
-        </button>
+        <div className="flex flex-wrap items-center gap-2">
+          {llmHealth && (
+            <div className="flex items-center gap-2 rounded-full border border-[var(--border)] px-3 py-2 text-xs text-text-secondary">
+              <ProviderDot label="Cerebras" ok={llmHealth.configured.cerebras} />
+              <ProviderDot label="Gemini" ok={llmHealth.configured.gemini} />
+            </div>
+          )}
+          <Link
+            href="/admin/graph"
+            className="rounded-full border border-[var(--border)] px-4 py-2 text-sm text-text-secondary transition-colors hover:bg-bg-secondary"
+          >
+            Graph view
+          </Link>
+          <button
+            onClick={handleDemoReset}
+            disabled={resetting}
+            className="rounded-full border border-[var(--border)] px-4 py-2 text-sm text-text-secondary transition-colors hover:bg-bg-secondary disabled:opacity-50"
+          >
+            {resetting ? "Resetting…" : "Reset demo data"}
+          </button>
+          <button
+            onClick={handleLogout}
+            className="rounded-full border border-[var(--border)] px-4 py-2 text-sm text-text-secondary transition-colors hover:bg-bg-secondary"
+          >
+            Sign out
+          </button>
+        </div>
       </header>
+
+      {resetMessage && (
+        <p className="mb-4 rounded-lg bg-bg-secondary px-3 py-2 text-sm text-text-secondary">
+          {resetMessage}
+        </p>
+      )}
 
       {error && (
         <p className="mb-4 rounded-lg bg-red-500/10 px-3 py-2 text-sm text-red-500">{error}</p>
@@ -312,5 +373,14 @@ function SummaryWidget({ label, value }: { label: string; value: string }) {
       <p className="text-xs text-text-secondary">{label}</p>
       <p className="mt-1 text-lg font-semibold text-text-primary">{value}</p>
     </div>
+  );
+}
+
+function ProviderDot({ label, ok }: { label: string; ok: boolean }) {
+  return (
+    <span className="flex items-center gap-1" title={ok ? `${label} configured` : `${label} not configured`}>
+      <span className={`h-2 w-2 rounded-full ${ok ? "bg-green-500" : "bg-red-500"}`} />
+      {label}
+    </span>
   );
 }
