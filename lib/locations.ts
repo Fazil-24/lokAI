@@ -18,6 +18,18 @@ const BLOCK_ALIASES: Record<string, string> = {
   bagepalli: "Bagepalli",
 };
 
+/** The 8 block-level locations seeded from the real MPLADS CSV (see scripts/seed.ts). */
+export const KNOWN_BLOCK_NAMES = [
+  "Hosakote",
+  "Devanahalli",
+  "Dodda Ballapur",
+  "Chikkaballapura",
+  "Magadi",
+  "Nelamangala",
+  "Gudibanda",
+  "Bagepalli",
+] as const;
+
 function titleCase(value: string): string {
   return value
     .toLowerCase()
