@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import type { ComplianceStatus } from "@/lib/schemeRules";
@@ -37,7 +37,7 @@ function formatINR(amount: number): string {
   return `₹${new Intl.NumberFormat("en-IN").format(Math.round(amount))}`;
 }
 
-export default function SimulatePage() {
+function SimulateContent() {
   const searchParams = useSearchParams();
   const ids = (searchParams.get("ids") ?? "").split(",").filter(Boolean);
   const [comparisons, setComparisons] = useState<Comparison[]>([]);
@@ -154,5 +154,13 @@ export default function SimulatePage() {
         ))}
       </div>
     </main>
+  );
+}
+
+export default function SimulatePage() {
+  return (
+    <Suspense fallback={<main className="min-h-screen p-4 sm:p-6"><p className="text-text-secondary">Loading…</p></main>}>
+      <SimulateContent />
+    </Suspense>
   );
 }
