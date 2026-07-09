@@ -67,7 +67,7 @@ export default function Home() {
           href={DEMO_VIDEO_URL}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-2 rounded-full border border-[var(--border)] px-6 py-3 font-medium text-text-primary transition-colors hover:bg-bg-secondary"
+          className="inline-flex items-center gap-2 rounded-full border border-accent/40 bg-accent/15 px-6 py-3 font-medium text-accent transition-colors hover:bg-accent/25"
         >
           ▶ Watch the walkthrough
         </a>
