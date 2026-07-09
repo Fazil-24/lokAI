@@ -14,7 +14,9 @@ never an LLM-invented number. The only two jobs an LLM is ever allowed to do (en
 
 
 ## Deployed link and demo video 
-https://lok-ai.vercel.app/
+https://lok-ai.vercel.app/ (use these credentials for demo: admin username: admin@lokai.demo and admin password: admin123
+
+video - https://youtu.be/vpcm0gkTEwU
 
 ## Architecture
 
