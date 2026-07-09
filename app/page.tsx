@@ -1,5 +1,7 @@
 import Link from "next/link";
-import { DashboardTeaser } from "@/app/components/DashboardTeaser";
+
+/** Set this once the demo video is recorded and uploaded (e.g. a YouTube/Drive/GitHub link). */
+const DEMO_VIDEO_URL = "#";
 
 const STEPS = [
   {
@@ -60,12 +62,15 @@ export default function Home() {
         ))}
       </div>
 
-      <div className="mt-16 flex w-full max-w-4xl flex-col items-center gap-4">
-        <p className="text-sm text-text-secondary">
-          Every number traces back to a Cypher query or a dataset row — nothing is a black-box LLM
-          guess.
-        </p>
-        <DashboardTeaser />
+      <div className="mt-16">
+        <a
+          href={DEMO_VIDEO_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-2 rounded-full border border-[var(--border)] px-6 py-3 font-medium text-text-primary transition-colors hover:bg-bg-secondary"
+        >
+          ▶ Watch the walkthrough
+        </a>
       </div>
     </main>
   );
