@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 /** Set this once the demo video is recorded and uploaded (e.g. a YouTube/Drive/GitHub link). */
-const DEMO_VIDEO_URL = "#";
+const DEMO_VIDEO_URL = "https://youtu.be/vpcm0gkTEwU";
 
 const STEPS = [
   {
