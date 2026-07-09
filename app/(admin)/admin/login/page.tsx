@@ -78,6 +78,18 @@ export default function AdminLoginPage() {
             {loading ? "Signing in…" : "Sign in"}
           </button>
         </form>
+        <p className="mt-4 text-center text-xs text-text-secondary">
+          Need admin credentials? Refer to the{" "}
+          <a
+            href="https://github.com/Fazil-24/lokAI"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-accent hover:underline"
+          >
+            GitHub repo
+          </a>{" "}
+          for details.
+        </p>
       </div>
     </main>
   );
